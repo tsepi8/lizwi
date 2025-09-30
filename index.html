@@ -300,7 +300,7 @@
     </div>
     
     <!-- Main Birthday Content -->
-        <div id="main-content">
+    <div id="main-content">
         <button class="play-music" id="playMusic">🎵</button>
         <div style="position: fixed; top: 75px; right: 20px; z-index: 101; display: flex; flex-direction: column; gap: 5px;">
             <button id="volumeUp" style="width:28px; height:28px; border-radius:50%; border:none; background:#fff; color:#5a2d5a; font-size:1.2rem; box-shadow:0 1px 5px rgba(0,0,0,0.1); cursor:pointer;">+</button>
@@ -323,11 +323,7 @@
             </div>
         </div>
     </div>
-    <!-- Audio elements -->
-    <audio id="ringtone" loop>
-        <source src="Ring.mp3" type="audio/mpeg">
-    </audio>
-    
+    <!-- Audio element: only background music -->
     <audio id="backgroundMusic" loop>
         <source src="BIRTHDAYDANCE.mp3" type="audio/mpeg">
     </audio>
@@ -338,35 +334,25 @@
         const mainContent = document.getElementById('main-content');
         const sliderButton = document.getElementById('sliderButton');
         const answerSlider = document.getElementById('answerSlider');
-        const ringtone = document.getElementById('ringtone');
         const backgroundMusic = document.getElementById('backgroundMusic');
         const playMusicButton = document.getElementById('playMusic');
         const floatingHearts = document.getElementById('floatingHearts');
+        const volumeUp = document.getElementById('volumeUp');
+        const volumeDown = document.getElementById('volumeDown');
 
         let isDragging = false;
         let startX = 0;
         let currentX = 0;
         let sliderWidth = answerSlider.offsetWidth - sliderButton.offsetWidth - 10;
 
-        // Start playing ringtone when page loads
+        // Only create hearts on load (no ringtone)
         window.addEventListener('load', function() {
-            ringtone.play().catch(e => console.log("Autoplay prevented:", e));
             createHearts();
         });
 
-        // Ensure ringtone always plays until answered
-        window.addEventListener('load', function() {
-        ringtone.currentTime = 0;
-        ringtone.loop = true;
-        ringtone.play().catch(e => console.log("Autoplay prevented:", e));
-        createHearts();
-        });
-
-        // When call is answered, play background music and stop ringtone
+        // When call is answered, play background music
         function answerCall() {
             sliderButton.classList.add('answered');
-            ringtone.pause();
-            ringtone.currentTime = 0;
             backgroundMusic.currentTime = 0;
             backgroundMusic.loop = true;
             backgroundMusic.play().catch(e => console.log("Background music autoplay prevented:", e));
@@ -379,10 +365,10 @@
                     backgroundMusic.play().catch(e => {});
                 }, 500);
             }, 300);
-       }
+        }
 
-       // Music control for background music
-       playMusicButton.addEventListener('click', function() {
+        // Music control for background music
+        playMusicButton.addEventListener('click', function() {
             if (backgroundMusic.paused) {
                 backgroundMusic.play();
                 this.textContent = '🔊';
@@ -392,17 +378,13 @@
             }
         });
 
-
         // Volume control buttons
-        const volumeUp = document.getElementById('volumeUp');
-        const volumeDown = document.getElementById('volumeDown');
-
         volumeUp.addEventListener('click', function() {
             backgroundMusic.volume = Math.min(1, backgroundMusic.volume + 0.1);
         });
         volumeDown.addEventListener('click', function() {
-        backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.1);
-    });
+            backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.1);
+        });
 
         // Mouse events for desktop
         sliderButton.addEventListener('mousedown', startDrag);
@@ -423,62 +405,25 @@
 
         function drag(e) {
             if (!isDragging) return;
-            
             currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
             const deltaX = currentX - startX;
-            
-            // Constrain the slider button within the track
             let newX = Math.max(0, Math.min(deltaX, sliderWidth));
             sliderButton.style.transform = `translateX(${newX}px)`;
-            
-            // If dragged more than 80% of the way, answer the call
             if (newX > sliderWidth * 0.8) {
                 answerCall();
             }
-            
             e.preventDefault();
         }
 
         function endDrag() {
             if (!isDragging) return;
-            
             isDragging = false;
             sliderButton.style.transition = 'transform 0.3s';
-            
-            // If not answered, return to start position
             const currentTranslate = parseInt(sliderButton.style.transform.replace('translateX(', '').replace('px)', '') || 0);
             if (currentTranslate < sliderWidth * 0.8) {
                 sliderButton.style.transform = 'translateX(0)';
             }
         }
-
-        function answerCall() {
-            sliderButton.classList.add('answered');
-            
-            // Stop ringtone and play background music
-            ringtone.pause();
-            backgroundMusic.play().catch(e => console.log("Background music autoplay prevented:", e));
-            
-            // Wait for animation to complete, then show main content
-            setTimeout(() => {
-                callScreen.style.opacity = '0';
-                setTimeout(() => {
-                    callScreen.style.display = 'none';
-                    mainContent.style.display = 'block';
-                }, 500);
-            }, 300);
-        }
-
-        // Music control for background music
-        playMusicButton.addEventListener('click', function() {
-            if (backgroundMusic.paused) {
-                backgroundMusic.play();
-                this.textContent = '🔊';
-            } else {
-                backgroundMusic.pause();
-                this.textContent = '🎵';
-            }
-        });
 
         // Create floating hearts
         function createHearts() {
@@ -488,33 +433,15 @@
                     const heart = document.createElement('div');
                     heart.className = 'heart';
                     heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                    
-                    // Random position
                     const left = Math.random() * 100;
                     heart.style.left = `${left}%`;
-                    
-                    // Random animation delay and duration
                     const delay = Math.random() * 15;
                     const duration = 8 + Math.random() * 7;
                     heart.style.animation = `float ${duration}s linear ${delay}s infinite`;
-                    
                     floatingHearts.appendChild(heart);
                 }, i * 500);
             }
         }
-
-        // Instructions for adding your media
-        console.log(`
-        TO ADD YOUR OWN MEDIA:
-        
-        1. Replace the placeholder divs with actual media:
-           - For photos: <img src="your-photo-url" class="media-item photo">
-           - For video: <video src="your-video-url" class="media-item video" controls></video>
-        
-        2. Replace the ringtone and background music:
-           - Ringtone: <source src="your-ringtone-url" type="audio/mpeg">
-           - Background: <source src="your-song-url" type="audio/mpeg">
-        `);
     </script>
 </body>
 </html>
