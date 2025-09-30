@@ -303,9 +303,12 @@
             </div>
         </div>
     </div>
-    <!-- Audio element: only background music -->
-    <audio id="backgroundMusic" loop>
+    <!-- Two background music audio elements -->
+    <audio id="backgroundMusic1">
         <source src="BIRTHDAYDANCE.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="backgroundMusic2">
+        <source src="SECONDSONG.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -314,7 +317,8 @@
         const mainContent = document.getElementById('main-content');
         const sliderButton = document.getElementById('sliderButton');
         const answerSlider = document.getElementById('answerSlider');
-        const backgroundMusic = document.getElementById('backgroundMusic');
+        const backgroundMusic1 = document.getElementById('backgroundMusic1');
+        const backgroundMusic2 = document.getElementById('backgroundMusic2');
         const floatingHearts = document.getElementById('floatingHearts');
         const volumeUp = document.getElementById('volumeUp');
         const volumeDown = document.getElementById('volumeDown');
@@ -323,35 +327,58 @@
         let startX = 0;
         let currentX = 0;
         let sliderWidth = answerSlider.offsetWidth - sliderButton.offsetWidth - 10;
+        let currentMusic = 1;
 
-        // Only create hearts on load (no ringtone)
         window.addEventListener('load', function() {
             createHearts();
         });
 
-        // When call is answered, play background music
+        // When call is answered, play the first background song
         function answerCall() {
             sliderButton.classList.add('answered');
-            backgroundMusic.currentTime = 0;
-            backgroundMusic.loop = true;
-            backgroundMusic.play().catch(e => console.log("Background music autoplay prevented:", e));
+            backgroundMusic1.currentTime = 0;
+            backgroundMusic2.currentTime = 0;
+            backgroundMusic1.loop = false;
+            backgroundMusic2.loop = false;
+            backgroundMusic1.play().catch(e => {});
+            currentMusic = 1;
             setTimeout(() => {
                 callScreen.style.opacity = '0';
                 setTimeout(() => {
                     callScreen.style.display = 'none';
                     mainContent.style.display = 'block';
-                    // Ensure background music is playing when main content is shown
-                    backgroundMusic.play().catch(e => {});
+                    backgroundMusic1.play().catch(e => {});
                 }, 500);
             }, 300);
         }
 
+        // Alternate songs when one ends
+        backgroundMusic1.addEventListener('ended', function() {
+            backgroundMusic2.currentTime = 0;
+            backgroundMusic2.play();
+            currentMusic = 2;
+        });
+
+        backgroundMusic2.addEventListener('ended', function() {
+            backgroundMusic1.currentTime = 0;
+            backgroundMusic1.play();
+            currentMusic = 1;
+        });
+
         // Volume control buttons
         volumeUp.addEventListener('click', function() {
-            backgroundMusic.volume = Math.min(1, backgroundMusic.volume + 0.1);
+            if (currentMusic === 1) {
+                backgroundMusic1.volume = Math.min(1, backgroundMusic1.volume + 0.1);
+            } else {
+                backgroundMusic2.volume = Math.min(1, backgroundMusic2.volume + 0.1);
+            }
         });
         volumeDown.addEventListener('click', function() {
-            backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.1);
+            if (currentMusic === 1) {
+                backgroundMusic1.volume = Math.max(0, backgroundMusic1.volume - 0.1);
+            } else {
+                backgroundMusic2.volume = Math.max(0, backgroundMusic2.volume - 0.1);
+            }
         });
 
         // Mouse events for desktop
