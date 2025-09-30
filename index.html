@@ -7,12 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         /* ...existing code... */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Poppins', sans-serif;
             background: #000;
@@ -21,8 +16,6 @@
             height: 100vh;
             width: 100vw;
         }
-
-        /* Call Screen Styles */
         #call-screen {
             position: fixed;
             top: 0;
@@ -38,100 +31,61 @@
             transition: opacity 0.5s ease;
             padding: 20px;
         }
+        .caller-info { text-align: center; margin-bottom: 40px; }
+        .caller-image { width: 120px; height: 120px; border-radius: 50%; border: 3px solid white; margin: 0 auto 20px; background: linear-gradient(45deg, #ff99cc, #cc99ff); display: flex; justify-content: center; align-items: center; font-size: 2.5rem; }
+        .caller-name { font-size: 1.8rem; font-weight: 600; margin-bottom: 5px; }
+        .call-status { font-size: 1.2rem; opacity: 0.8; }
+        .answer-slider { width: 300px; max-width: 90%; height: 70px; background: rgba(255, 255, 255, 0.2); border-radius: 35px; margin-top: 30px; position: relative; overflow: hidden; }
+        .slider-track { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.2rem; letter-spacing: 1px; }
+        .slider-button { position: absolute; left: 5px; top: 5px; width: 60px; height: 60px; background: #4cd964; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; transition: transform 0.3s; z-index: 10; }
+        .slider-button.answered { transform: translateX(230px); }
+        #main-content { display: none; height: 100vh; overflow: auto; position: relative; background: linear-gradient(135deg, #ffcce6, #e6ccff, #ccf2ff); color: #5a2d5a; padding: 20px; }
+        .birthday-card { max-width: 600px; margin: 0 auto; text-align: center; background: rgba(255, 255, 255, 0.8); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); margin-top: 20px; }
 
-        .caller-info {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .caller-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid white;
-            margin: 0 auto 20px;
-            background: linear-gradient(45deg, #ff99cc, #cc99ff);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.5rem;
-        }
-
-        .caller-name {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .call-status {
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-
-        .answer-slider {
-            width: 300px;
-            max-width: 90%;
-            height: 70px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 35px;
-            margin-top: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .slider-track {
+        /* Progress bar rectangle around text */
+        .song-progress-container-rect {
             width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-        }
-
-        .slider-button {
-            position: absolute;
-            left: 5px;
-            top: 5px;
-            width: 60px;
-            height: 60px;
-            background: #4cd964;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-            z-index: 10;
-        }
-
-        .slider-button.answered {
-            transform: translateX(230px);
-        }
-
-        /* Main Content Styles (hidden initially) */
-        #main-content {
-            display: none;
-            height: 100vh;
-            overflow: auto;
-            position: relative;
-            background: linear-gradient(135deg, #ffcce6, #e6ccff, #ccf2ff);
-            color: #5a2d5a;
-            padding: 20px;
-        }
-
-        .birthday-card {
             max-width: 600px;
-            margin: 0 auto;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
+            margin: 0 auto 30px auto;
+            position: relative;
+        }
+        .song-progress-bar-rect {
+            position: relative;
+            border-radius: 24px;
+            border: 4px solid #e6ccff;
+            background: rgba(230,204,255,0.12);
+            box-shadow: 0 2px 8px rgba(153,51,204,0.08);
+            overflow: hidden;
+            padding: 0;
+            min-height: 0;
+        }
+        .song-progress-fill-rect,
+        .song-progress-fill-rect2 {
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            border-radius: 24px;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.35;
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .song-progress-fill-rect {
+            background: linear-gradient(90deg, #ff99cc 0%, #9933cc 100%);
+            left: 0;
+        }
+        .song-progress-fill-rect2 {
+            background: linear-gradient(270deg, #b39ddb 0%, #7c43bd 100%);
+            right: 0;
+            left: auto;
+        }
+        .song-progress-bar-rect.song2 .song-progress-fill-rect2 {
+            background: linear-gradient(270deg, #b39ddb 0%, #7c43bd 100%);
+        }
+        .progress-content {
+            position: relative;
+            z-index: 2;
+            padding: 32px 24px 24px 24px;
         }
 
         .birthday-title {
@@ -228,21 +182,21 @@
             .caller-name {
                 font-size: 1.5rem;
             }
-            
             .answer-slider {
                 width: 280px;
             }
-            
             .slider-button.answered {
                 transform: translateX(210px);
             }
-            
             .birthday-title {
                 font-size: 2.8rem;
             }
-            
             .birthday-card {
                 padding: 20px;
+            }
+            .song-progress-container-rect,
+            .song-progress-bar-rect {
+                max-width: 98vw;
             }
         }
 
@@ -250,17 +204,18 @@
             .birthday-title {
                 font-size: 2.2rem;
             }
-            
             .birthday-date {
                 font-size: 1rem;
             }
-            
             .birthday-message {
                 font-size: 1rem;
             }
-            
             .media-grid {
                 gap: 10px;
+            }
+            .song-progress-container-rect,
+            .song-progress-bar-rect {
+                max-width: 99vw;
             }
         }
     </style>
@@ -273,13 +228,11 @@
             <div class="caller-name">Birthday Call</div>
             <div class="call-status">Incoming...</div>
         </div>
-        
         <div class="answer-slider" id="answerSlider">
             <div class="slider-track">Slide to answer</div>
             <div class="slider-button" id="sliderButton">➔</div>
         </div>
     </div>
-    
     <!-- Main Birthday Content -->
     <div id="main-content">
         <div style="position: fixed; top: 75px; right: 20px; z-index: 101; display: flex; flex-direction: column; gap: 5px;">
@@ -288,10 +241,18 @@
         </div>
         <div class="floating-hearts" id="floatingHearts"></div>
         <div class="birthday-card">
-            <h1 class="birthday-title">Happy Birthday Nolizwi</h1>
-            <div class="birthday-date">30 September 2025</div>
-            <div class="birthday-message">
-                "Anginawo amaningi, i just wanted to wish you the happiest birthday. Ngoba uyaphapha😏, you have already experienced some of the things i was gonna warn you about!🤣 Happy birthday mnganami, ngiyakuthanda kakhulu, yezwa!?🥺🥹"
+            <div class="song-progress-container-rect">
+                <div id="songProgressBarRect" class="song-progress-bar-rect">
+                    <div id="songProgressFillRect" class="song-progress-fill-rect"></div>
+                    <div id="songProgressFillRect2" class="song-progress-fill-rect2"></div>
+                    <div class="progress-content">
+                        <h1 class="birthday-title">Happy 21st Birthday Nolizwi</h1>
+                        <div class="birthday-date">30 September 2025</div>
+                        <div class="birthday-message">
+                            Anginawo amaningi, I just wanted to wish you the happiest birthday. Ngoba uyaphapha😏, you have already experienced some of the things i was gonna warn you about!🤣 You once wrote me the best Birthday wish message I've ever received🥺. I thought I should return the favour💔🤕, kodwake because kwaFinance akuhambi kahle, I thought I should just invest my time and code to produce this🥺😂. Thanks for being in my life🥺😂❤️. Happy birthday Nolizwi, ngiyakuthanda kakhulu, Yezwa!?🥺🥹
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="media-grid">
                 <img src="1.jpeg" class="media-item photo" alt="Photo 1">
@@ -322,18 +283,23 @@
         const floatingHearts = document.getElementById('floatingHearts');
         const volumeUp = document.getElementById('volumeUp');
         const volumeDown = document.getElementById('volumeDown');
+        const songProgressBarRect = document.getElementById('songProgressBarRect');
+        const songProgressFillRect = document.getElementById('songProgressFillRect');
+        const songProgressFillRect2 = document.getElementById('songProgressFillRect2');
 
         let isDragging = false;
         let startX = 0;
         let currentX = 0;
         let sliderWidth = answerSlider.offsetWidth - sliderButton.offsetWidth - 10;
         let currentMusic = 1;
+        let progressInterval = null;
+        let prevPercent = 0;
+        let prevPercent2 = 0;
 
         window.addEventListener('load', function() {
             createHearts();
         });
 
-        // When call is answered, play the first background song
         function answerCall() {
             sliderButton.classList.add('answered');
             backgroundMusic1.currentTime = 0;
@@ -342,30 +308,47 @@
             backgroundMusic2.loop = false;
             backgroundMusic1.play().catch(e => {});
             currentMusic = 1;
+            prevPercent = 0;
+            prevPercent2 = 0;
+            songProgressFillRect.style.width = "0%";
+            songProgressFillRect2.style.width = "0%";
             setTimeout(() => {
                 callScreen.style.opacity = '0';
                 setTimeout(() => {
                     callScreen.style.display = 'none';
                     mainContent.style.display = 'block';
                     backgroundMusic1.play().catch(e => {});
+                    startProgressBarRect();
                 }, 500);
             }, 300);
         }
 
-        // Alternate songs when one ends
         backgroundMusic1.addEventListener('ended', function() {
+            // Keep previous progression
+            prevPercent = 100;
+            songProgressFillRect.style.width = "100%";
+            // Start next song progression from right to left
             backgroundMusic2.currentTime = 0;
             backgroundMusic2.play();
             currentMusic = 2;
+            prevPercent2 = 0;
+            songProgressFillRect2.style.width = "0%";
+            updateSongProgressRect();
         });
 
         backgroundMusic2.addEventListener('ended', function() {
+            // Keep previous progression
+            prevPercent2 = 100;
+            songProgressFillRect2.style.width = "100%";
+            // Start next song progression from left to right
             backgroundMusic1.currentTime = 0;
             backgroundMusic1.play();
             currentMusic = 1;
+            prevPercent = 0;
+            songProgressFillRect.style.width = "0%";
+            updateSongProgressRect();
         });
 
-        // Volume control buttons
         volumeUp.addEventListener('click', function() {
             if (currentMusic === 1) {
                 backgroundMusic1.volume = Math.min(1, backgroundMusic1.volume + 0.1);
@@ -381,12 +364,39 @@
             }
         });
 
-        // Mouse events for desktop
+        function updateSongProgressRect() {
+            if (currentMusic === 1) {
+                let audio = backgroundMusic1;
+                let percent = (audio.currentTime / audio.duration) * 100;
+                if (isNaN(percent)) percent = 0;
+                songProgressFillRect.style.width = percent + "%";
+                songProgressBarRect.classList.remove('song2');
+            } else {
+                let audio = backgroundMusic2;
+                let percent = (audio.currentTime / audio.duration) * 100;
+                if (isNaN(percent)) percent = 0;
+                // Right to left progression
+                songProgressFillRect2.style.width = percent + "%";
+                songProgressBarRect.classList.add('song2');
+            }
+        }
+
+        function startProgressBarRect() {
+            clearInterval(progressInterval);
+            progressInterval = setInterval(updateSongProgressRect, 500);
+        }
+
+        function stopProgressBarRect() {
+            clearInterval(progressInterval);
+        }
+
+        backgroundMusic1.addEventListener('timeupdate', updateSongProgressRect);
+        backgroundMusic2.addEventListener('timeupdate', updateSongProgressRect);
+
         sliderButton.addEventListener('mousedown', startDrag);
         document.addEventListener('mousemove', drag);
         document.addEventListener('mouseup', endDrag);
 
-        // Touch events for mobile
         sliderButton.addEventListener('touchstart', startDrag);
         document.addEventListener('touchmove', drag);
         document.addEventListener('touchend', endDrag);
@@ -420,7 +430,6 @@
             }
         }
 
-        // Create floating hearts
         function createHearts() {
             const hearts = ['❤️', '💖', '💕', '💗', '💓', '💞', '🥹','❤️','🎂','🥳','🎊','🎉','🎈'];
             for (let i = 0; i < 20; i++) {
