@@ -350,28 +350,29 @@
     let currentX = 0;
     let sliderWidth = answerSlider.offsetWidth - sliderButton.offsetWidth - 10;
 
-    // Start playing ringtone when page loads
+   // Start playing ringtone when page loads
     window.addEventListener('load', function() {
+        // Only play ringtone, not background music
         ringtone.currentTime = 0;
         ringtone.loop = true;
         ringtone.play().catch(e => console.log("Autoplay prevented:", e));
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
         createHearts();
     });
 
-    // When call is answered, play background music and stop ringtone
     function answerCall() {
         sliderButton.classList.add('answered');
         ringtone.pause();
         ringtone.currentTime = 0;
-        backgroundMusic.currentTime = 0;
-        backgroundMusic.loop = true;
-        backgroundMusic.play().catch(e => console.log("Background music autoplay prevented:", e));
         setTimeout(() => {
             callScreen.style.opacity = '0';
             setTimeout(() => {
                 callScreen.style.display = 'none';
                 mainContent.style.display = 'block';
-                // Ensure background music is playing when main content is shown
+                // Now play background music
+                backgroundMusic.currentTime = 0;
+                backgroundMusic.loop = true;
                 backgroundMusic.play().catch(e => {});
             }, 500);
         }, 300);
@@ -453,20 +454,10 @@
         }
     }
 </script>
-        // Instructions for adding your media
-        console.log(`
-        TO ADD YOUR OWN MEDIA:
-        
-        1. Replace the placeholder divs with actual media:
-           - For photos: <img src="your-photo-url" class="media-item photo">
-           - For video: <video src="your-video-url" class="media-item video" controls></video>
-        
-        2. Replace the ringtone and background music:
-           - Ringtone: <source src="your-ringtone-url" type="audio/mpeg">
-           - Background: <source src="your-song-url" type="audio/mpeg">
-        `);
+       
     </script>
 </body>
 </html>
+
 
 
