@@ -302,6 +302,10 @@
     <!-- Main Birthday Content -->
         <div id="main-content">
         <button class="play-music" id="playMusic">🎵</button>
+        <div style="position: fixed; top: 75px; right: 20px; z-index: 101; display: flex; flex-direction: column; gap: 5px;">
+            <button id="volumeUp" style="width:28px; height:28px; border-radius:50%; border:none; background:#fff; color:#5a2d5a; font-size:1.2rem; box-shadow:0 1px 5px rgba(0,0,0,0.1); cursor:pointer;">+</button>
+            <button id="volumeDown" style="width:28px; height:28px; border-radius:50%; border:none; background:#fff; color:#5a2d5a; font-size:1.2rem; box-shadow:0 1px 5px rgba(0,0,0,0.1); cursor:pointer;">−</button>
+        </div>
         <div class="floating-hearts" id="floatingHearts"></div>
         <div class="birthday-card">
             <h1 class="birthday-title">Happy Birthday Nolizwi</h1>
@@ -348,6 +352,56 @@
         window.addEventListener('load', function() {
             ringtone.play().catch(e => console.log("Autoplay prevented:", e));
             createHearts();
+        });
+
+        // Ensure ringtone always plays until answered
+        window.addEventListener('load', function() {
+        ringtone.currentTime = 0;
+        ringtone.loop = true;
+        ringtone.play().catch(e => console.log("Autoplay prevented:", e));
+        createHearts();
+        });
+
+        // When call is answered, play background music and stop ringtone
+        function answerCall() {
+            sliderButton.classList.add('answered');
+            ringtone.pause();
+            ringtone.currentTime = 0;
+            backgroundMusic.currentTime = 0;
+            backgroundMusic.loop = true;
+            backgroundMusic.play().catch(e => console.log("Background music autoplay prevented:", e));
+            setTimeout(() => {
+                callScreen.style.opacity = '0';
+                setTimeout(() => {
+                    callScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    // Ensure background music is playing when main content is shown
+                    backgroundMusic.play().catch(e => {});
+                }, 500);
+            }, 300);
+       }
+
+       // Music control for background music
+       playMusicButton.addEventListener('click', function() {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                this.textContent = '🔊';
+            } else {
+                backgroundMusic.pause();
+                this.textContent = '🎵';
+            }
+        });
+
+
+        // Volume control buttons
+        const volumeUp = document.getElementById('volumeUp');
+        const volumeDown = document.getElementById('volumeDown');
+
+        volumeUp.addEventListener('click', function() {
+            backgroundMusic.volume = Math.min(1, backgroundMusic.volume + 0.1);
+        });
+        volumeDown.addEventListener('click', function() {
+            backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.1);
         });
 
         // Mouse events for desktop
